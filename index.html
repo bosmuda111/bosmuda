@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LeleFarm - Manajemen Ternak Lele</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#172033;
+}
+
+header{
+    background:linear-gradient(135deg,#087f5b,#0ca678);
+    color:white;
+    padding:22px 18px;
+    border-radius:0 0 22px 22px;
+}
+
+header h1{
+    font-size:25px;
+}
+
+header p{
+    margin-top:6px;
+    opacity:.9;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:18px;
+}
+
+/* NAV */
+nav{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:12px 0;
+    margin-bottom:15px;
+}
+
+nav button{
+    border:0;
+    background:white;
+    padding:11px 15px;
+    border-radius:12px;
+    white-space:nowrap;
+    cursor:pointer;
+    box-shadow:0 2px 8px #00000010;
+}
+
+nav button.active{
+    background:#087f5b;
+    color:white;
+}
+
+/* SECTION */
+.section{
+    display:none;
+}
+
+.section.active{
+    display:block;
+}
+
+/* DASHBOARD */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+}
+
+.card{
+    background:white;
+    padding:18px;
+    border-radius:16px;
+    box-shadow:0 3px 12px #0000000c;
+}
+
+.card h3{
+    font-size:14px;
+    color:#687386;
+    margin-bottom:8px;
+}
+
+.card strong{
+    font-size:22px;
+}
+
+.green{color:#087f5b;}
+.red{color:#d6336c;}
+.blue{color:#1971c2;}
+.orange{color:#e67700;}
+
+.panel{
+    background:white;
+    margin-top:15px;
+    padding:18px;
+    border-radius:16px;
+    box-shadow:0 3px 12px #0000000c;
+}
+
+.panel h2{
+    margin-bottom:15px;
+    font-size:19px;
+}
+
+/* FORM */
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+}
+
+input,select,textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #d9dee7;
+    border-radius:10px;
+    outline:none;
+    margin-top:5px;
+}
+
+input:focus,select:focus,textarea:focus{
+    border-color:#087f5b;
+}
+
+label{
+    font-size:13px;
+    color:#566174;
+}
+
+textarea{
+    resize:vertical;
+}
+
+.btn{
+    border:0;
+    padding:12px 16px;
+    border-radius:10px;
+    cursor:pointer;
+    margin-top:12px;
+    font-weight:bold;
+}
+
+.btn-primary{
+    background:#087f5b;
+    color:white;
+}
+
+.btn-danger{
+    background:#ffe3e3;
+    color:#c92a2a;
+}
+
+.btn-secondary{
+    background:#e7f5ff;
+    color:#1864ab;
+}
+
+/* TABLE */
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:650px;
+}
+
+th,td{
+    padding:12px 10px;
+    border-bottom:1px solid #edf0f4;
+    text-align:left;
+    font-size:14px;
+}
+
+th{
+    background:#f8f9fa;
+}
+
+/* CHECKLIST */
+.task{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:13px;
+    background:#f8f9fa;
+    border-radius:10px;
+    margin-bottom:8px;
+}
+
+.badge{
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    background:#d3f9d8;
+    color:#087f5b;
+}
+
+.badge.pending{
+    background:#fff3bf;
+    color:#e67700;
+}
+
+/* MOBILE */
+@media(max-width:700px){
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .card strong{
+        font-size:18px;
+    }
+
+    header h1{
+        font-size:21px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="container">
+        <h1>🐟 LeleFarm</h1>
+        <p>Manajemen Ternak Lele</p>
+    </div>
+</header>
+
+<div class="container">
+
+<nav>
+    <button class="nav active" onclick="showSection('dashboard',this)">📊 Dashboard</button>
+    <button class="nav" onclick="showSection('kolam',this)">🐟 Kolam</button>
+    <button class="nav" onclick="showSection('biaya',this)">💰 Biaya</button>
+    <button class="nav" onclick="showSection('pakan',this)">🍽️ Pakan</button>
+    <button class="nav" onclick="showSection('bersih',this)">🧹 Kolam</button>
+    <button class="nav" onclick="showSection('perawatan',this)">🔧 Perawatan</button>
+    <button class="nav" onclick="showSection('pemasukan',this)">💵 Pemasukan</button>
+</nav>
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="section active">
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total Modal</h3>
+            <strong class="orange" id="totalModal">Rp0</strong>
+        </div>
+
+        <div class="card">
+            <h3>Total Pemasukan</h3>
+            <strong class="blue" id="totalPemasukan">Rp0</strong>
+        </div>
+
+        <div class="card">
+            <h3>Laba / Rugi</h3>
+            <strong id="Rugi">Rp0</strong>
+        </div>
+
+        <div class="card">
+            <h3>Total Kolam</h3>
+            <strong class="green" id="totalKolam">0</strong>
+        </div>
+
+    </div>
+
+    <div class="panel">
+        <h2>📊 Ringkasan Keuangan</h2>
+
+        <p>Total biaya: <b id="dashBiaya">Rp0</b></p>
+        <p>Total pemasukan: <b id="dashPemasukan">Rp0</b></p>
+        <p>Laba/rugi: <b id="dashLaba">Rp0</b></p>
+        <p>Modal rata-rata per kolam: <b id="modalRata">Rp0</b></p>
+    </div>
+
+    <div class="panel">
+        <h2>📌 Jadwal Terdekat</h2>
+        <div id="jadwalDashboard">
+            Belum ada jadwal.
+        </div>
+    </div>
+
+</section>
+
+<!-- KOLAM -->
+<section id="kolam" class="section">
+
+    <div class="panel">
+        <h2>➕ Tambah Data Kolam</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Nama / Nomor Kolam</label>
+                <input id="namaKolam" placeholder="Contoh: Kolam 1">
+            </div>
+
+            <div>
+                <label>Luas Kolam (m²)</label>
+                <input id="luasKolam" type="number" placeholder="10">
+            </div>
+
+            <div>
+                <label>Jumlah Bibit</label>
+                <input id="bibitKolam" type="number" placeholder="1000">
+            </div>
+
+            <div>
+                <label>Tanggal Mulai</label>
+                <input id="tanggalKolam" type="date">
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary" onclick="tambahKolam()">Simpan Kolam</button>
+    </div>
+
+    <div class="panel">
+        <h2>🐟 Data Kolam</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Kolam</th>
+                        <th>Luas</th>
+                        <th>Bibit</th>
+                        <th>Mulai</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tabelKolam"></tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+<!-- BIAYA -->
+<section id="biaya" class="section">
+
+    <div class="panel">
+        <h2>💰 Tambah Biaya</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Tanggal</label>
+                <input id="biayaTanggal" type="date">
+            </div>
+
+            <div>
+                <label>Jenis Biaya</label>
+                <select id="biayaJenis">
+                    <option>Pakan</option>
+                    <option>Bibit</option>
+                    <option>Obat</option>
+                    <option>Listrik</option>
+                    <option>Air</option>
+                    <option>Peralatan</option>
+                    <option>Lainnya</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Nominal</label>
+                <input id="biayaNominal" type="number" placeholder="50000">
+            </div>
+
+            <div>
+                <label>Catatan</label>
+                <input id="biayaCatatan" placeholder="Contoh: Pakan 2 kg">
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary" onclick="tambahBiaya()">Tambah Biaya</button>
+    </div>
+
+    <div class="panel">
+        <h2>📋 Riwayat Biaya</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Jenis</th>
+                        <th>Nominal</th>
+                        <th>Catatan</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tabelBiaya"></tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+<!-- PAKAN -->
+<section id="pakan" class="section">
+
+    <div class="panel">
+        <h2>🍽️ Jadwal Pakan</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Tanggal</label>
+                <input id="pakanTanggal" type="date">
+            </div>
+
+            <div>
+                <label>Jam</label>
+                <input id="pakanJam" type="time">
+            </div>
+
+            <div>
+                <label>Kolam</label>
+                <input id="pakanKolam" placeholder="Kolam 1">
+            </div>
+
+            <div>
+                <label>Jumlah Pakan</label>
+                <input id="pakanJumlah" placeholder="100 gram">
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary" onclick="tambahPakan()">Tambah Jadwal</button>
+    </div>
+
+    <div class="panel">
+        <h2>📅 Jadwal Pakan</h2>
+        <div id="listPakan"></div>
+    </div>
+
+</section>
+
+<!-- PEMBERSIHAN -->
+<section id="bersih" class="section">
+
+    <div class="panel">
+        <h2>🧹 Jadwal Pembersihan Kolam</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Tanggal</label>
+                <input id="bersihTanggal" type="date">
+            </div>
+
+            <div>
+                <label>Kolam</label>
+                <input id="bersihKolam" placeholder="Kolam 1">
+            </div>
+
+            <div>
+                <label>Catatan</label>
+                <input id="bersihCatatan" placeholder="Ganti air 30%">
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary" onclick="tambahBersih()">Tambah Jadwal</button>
+    </div>
+
+    <div class="panel">
+        <h2>📋 Jadwal Pembersihan</h2>
+        <div id="listBersih"></div>
+    </div>
+
+</section>
+
+<!-- PERAWATAN -->
+<section id="perawatan" class="section">
+
+    <div class="panel">
+        <h2>🔧 Biaya & Riwayat Perawatan</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Tanggal</label>
+                <input id="rawatTanggal" type="date">
+            </div>
+
+            <div>
+                <label>Kolam</label>
+                <input id="rawatKolam" placeholder="Kolam 1">
+            </div>
+
+            <div>
+                <label>Jenis Perawatan</label>
+                <input id="rawatJenis" placeholder="Obat / ganti air">
+            </div>
+
+            <div>
+                <label>Biaya</label>
+                <input id="rawatBiaya" type="number" placeholder="25000">
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary" onclick="tambahRawat()">Simpan Perawatan</button>
+    </div>
+
+    <div class="panel">
+        <h2>📋 Riwayat Perawatan</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Kolam</th>
+                        <th>Jenis</th>
+                        <th>Biaya</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tabelRawat"></tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+<!-- PEMASUKAN -->
+<section id="pemasukan" class="section">
+
+    <div class="panel">
+        <h2>💵 Tambah Pemasukan</h2>
+
+        <div class="form-grid">
+
+            <div>
+                <label>Tanggal</label>
+                <input id="jualTanggal" type="date">
+            </div>
+
+            <div>
+                <label>Kolam</label>
+                <input id="jualKolam" placeholder="Kolam 1">
+            </div>
+
+            <div>
+                <label>Berat Lele (kg)</label>
+                <input id="jualBerat" type="number" step="0.01">
+            </div>
+
+            <div>
+                <label>Harga per kg</label>
+                <input id="jualHarga" type="number" placeholder="25000">
+            </div>
+
+        </div>
+
+        <button class="btn btn-primary" onclick="tambahPemasukan()">Simpan Pemasukan</button>
+    </div>
+
+    <div class="panel">
+        <h2>📋 Riwayat Penjualan</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Kolam</th>
+                        <th>Berat</th>
+                        <th>Harga/kg</th>
+                        <th>Total</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tabelJual"></tbody>
+            </table>
+        </div>
+    </div>
+
+</section>
+
+</div>
+
+<script>
+
+/* =========================
+   DATABASE LOCAL STORAGE
+========================= */
+
+let data = JSON.parse(localStorage.getItem("leleFarm")) || {
+    kolam: [],
+    biaya: [],
+    pakan: [],
+    bersih: [],
+    rawat: [],
+    jual: []
+};
+
+function save(){
+    localStorage.setItem("leleFarm", JSON.stringify(data));
+    renderAll();
+}
+
+function rupiah(angka){
+    return new Intl.NumberFormat("id-ID",{
+        style:"currency",
+        currency:"IDR",
+        maximumFractionDigits:0
+    }).format(angka || 0);
+}
+
+/* =========================
+   NAVIGASI
+========================= */
+
+function showSection(id,button){
+
+    document.querySelectorAll(".section")
+        .forEach(x=>x.classList.remove("active"));
+
+    document.querySelectorAll(".nav")
+        .forEach(x=>x.classList.remove("active"));
+
+    document.getElementById(id).classList.add("active");
+
+    if(button){
+        button.classList.add("active");
+    }
+}
+
+/* =========================
+   KOLAM
+========================= */
+
+function tambahKolam(){
+
+    let nama = document.getElementById("namaKolam").value;
+    let luas = Number(document.getElementById("luasKolam").value);
+    let bibit = Number(document.getElementById("bibitKolam").value);
+    let tanggal = document.getElementById("tanggalKolam").value;
+
+    if(!nama || !luas || !bibit){
+        alert("Lengkapi data kolam!");
+        return;
+    }
+
+    data.kolam.push({
+        id:Date.now(),
+        nama,
+        luas,
+        bibit,
+        tanggal
+    });
+
+    save();
+
+    document.getElementById("namaKolam").value="";
+    document.getElementById("luasKolam").value="";
+    document.getElementById("bibitKolam").value="";
+}
+
+function hapus(type,id){
+
+    data[type] = data[type].filter(x=>x.id!==id);
+    save();
+}
+
+function renderKolam(){
+
+    let html="";
+
+    data.kolam.forEach(x=>{
+        html += `
+        <tr>
+            <td>${x.nama}</td>
+            <td>${x.luas} m²</td>
+            <td>${x.bibit.toLocaleString("id-ID")}</td>
+            <td>${x.tanggal || "-"}</td>
+            <td>
+                <button class="btn btn-danger"
+                onclick="hapus('kolam',${x.id})">Hapus</button>
+            </td>
+        </tr>`;
+    });
+
+    document.getElementById("tabelKolam").innerHTML =
+        html || `<tr><td colspan="5">Belum ada data.</td></tr>`;
+}
+
+/* =========================
+   BIAYA
+========================= */
+
+function tambahBiaya(){
+
+    let tanggal=document.getElementById("biayaTanggal").value;
+    let jenis=document.getElementById("biayaJenis").value;
+    let nominal=Number(document.getElementById("biayaNominal").value);
+    let catatan=document.getElementById("biayaCatatan").value;
+
+    if(!nominal){
+        alert("Masukkan nominal biaya!");
+        return;
+    }
+
+    data.biaya.push({
+        id:Date.now(),
+        tanggal,
+        jenis,
+        nominal,
+        catatan
+    });
+
+    save();
+
+    document.getElementById("biayaNominal").value="";
+    document.getElementById("biayaCatatan").value="";
+}
+
+function renderBiaya(){
+
+    let html="";
+
+    data.biaya.forEach(x=>{
+        html += `
+        <tr>
+            <td>${x.tanggal || "-"}</td>
+            <td>${x.jenis}</td>
+            <td>${rupiah(x.nominal)}</td>
+            <td>${x.catatan || "-"}</td>
+            <td>
+                <button class="btn btn-danger"
+                onclick="hapus('biaya',${x.id})">Hapus</button>
+            </td>
+        </tr>`;
+    });
+
+    document.getElementById("tabelBiaya").innerHTML =
+        html || `<tr><td colspan="5">Belum ada biaya.</td></tr>`;
+}
+
+/* =========================
+   PAKAN
+========================= */
+
+function tambahPakan(){
+
+    let tanggal=document.getElementById("pakanTanggal").value;
+    let jam=document.getElementById("pakanJam").value;
+    let kolam=document.getElementById("pakanKolam").value;
+    let jumlah=document.getElementById("pakanJumlah").value;
+
+    if(!tanggal || !jam || !kolam){
+        alert("Lengkapi jadwal pakan!");
+        return;
+    }
+
+    data.pakan.push({
+        id:Date.now(),
+        tanggal,
+        jam,
+        kolam,
+        jumlah,
+        selesai:false
+    });
+
+    save();
+}
+
+function togglePakan(id){
+
+    let item=data.pakan.find(x=>x.id===id);
+
+    if(item){
+        item.selesai=!item.selesai;
+    }
+
+    save();
+}
+
+function renderPakan(){
+
+    let html="";
+
+    data.pakan
+        .sort((a,b)=>(a.tanggal+a.jam).localeCompare(b.tanggal+b.jam))
+        .forEach(x=>{
+
+        html += `
+        <div class="task">
+
+            <div>
+                <b>${x.tanggal} • ${x.jam}</b><br>
+                ${x.kolam} — ${x.jumlah || "-"}
+            </div>
+
+            <div>
+                <span class="badge ${x.selesai?'':'pending'}">
+                    ${x.selesai?'Sudah':'Belum'}
+                </span>
+
+                <button class="btn btn-secondary"
+                onclick="togglePakan(${x.id})">
+                    ✓
+                </button>
+
+                <button class="btn btn-danger"
+                onclick="hapus('pakan',${x.id})">
+                    Hapus
+                </button>
+            </div>
+
+        </div>`;
+    });
+
+    document.getElementById("listPakan").innerHTML =
+        html || "Belum ada jadwal pakan.";
+}
+
+/* =========================
+   PEMBERSIHAN
+========================= */
+
+function tambahBersih(){
+
+    let tanggal=document.getElementById("bersihTanggal").value;
+    let kolam=document.getElementById("bersihKolam").value;
+    let catatan=document.getElementById("bersihCatatan").value;
+
+    if(!tanggal || !kolam){
+        alert("Lengkapi jadwal!");
+        return;
+    }
+
+    data.bersih.push({
+        id:Date.now(),
+        tanggal,
+        kolam,
+        catatan,
+        selesai:false
+    });
+
+    save();
+}
+
+function toggleBersih(id){
+
+    let item=data.bersih.find(x=>x.id===id);
+
+    if(item){
+        item.selesai=!item.selesai;
+    }
+
+    save();
+}
+
+function renderBersih(){
+
+    let html="";
+
+    data.bersih.forEach(x=>{
+
+        html += `
+        <div class="task">
+
+            <div>
+                <b>${x.tanggal}</b><br>
+                ${x.kolam} — ${x.catatan || "-"}
+            </div>
+
+            <div>
+                <span class="badge ${x.selesai?'':'pending'}">
+                    ${x.selesai?'Sudah':'Belum'}
+                </span>
+
+                <button class="btn btn-secondary"
+                onclick="toggleBersih(${x.id})">
+                    ✓
+                </button>
+
+                <button class="btn btn-danger"
+                onclick="hapus('bersih',${x.id})">
+                    Hapus
+                </button>
+            </div>
+
+        </div>`;
+    });
+
+    document.getElementById("listBersih").innerHTML =
+        html || "Belum ada jadwal pembersihan.";
+}
+
+/* =========================
+   PERAWATAN
+========================= */
+
+function tambahRawat(){
+
+    let tanggal=document.getElementById("rawatTanggal").value;
+    let kolam=document.getElementById("rawatKolam").value;
+    let jenis=document.getElementById("rawatJenis").value;
+    let biaya=Number(document.getElementById("rawatBiaya").value);
+
+    if(!tanggal || !kolam || !jenis){
+        alert("Lengkapi data perawatan!");
+        return;
+    }
+
+    data.rawat.push({
+        id:Date.now(),
+        tanggal,
+        kolam,
+        jenis,
+        biaya
+    });
+
+    /* Masukkan biaya perawatan ke laporan biaya */
+    if(biaya>0){
+        data.biaya.push({
+            id:Date.now()+1,
+            tanggal,
+            jenis:"Perawatan",
+            nominal:biaya,
+            catatan:jenis+" - "+kolam
+        });
+    }
+
+    save();
+}
+
+function renderRawat(){
+
+    let html="";
+
+    data.rawat.forEach(x=>{
+
+        html += `
+        <tr>
+            <td>${x.tanggal}</td>
+            <td>${x.kolam}</td>
+            <td>${x.jenis}</td>
+            <td>${rupiah(x.biaya)}</td>
+            <td>
+                <button class="btn btn-danger"
+                onclick="hapus('rawat',${x.id})">Hapus</button>
+            </td>
+        </tr>`;
+    });
+
+    document.getElementById("tabelRawat").innerHTML =
+        html || `<tr><td colspan="5">Belum ada data.</td></tr>`;
+}
+
+/* =========================
+   PEMASUKAN
+========================= */
+
+function tambahPemasukan(){
+
+    let tanggal=document.getElementById("jualTanggal").value;
+    let kolam=document.getElementById("jualKolam").value;
+    let berat=Number(document.getElementById("jualBerat").value);
+    let harga=Number(document.getElementById("jualHarga").value);
+
+    if(!tanggal || !berat || !harga){
+        alert("Lengkapi data penjualan!");
+        return;
+    }
+
+    data.jual.push({
+        id:Date.now(),
+        tanggal,
+        kolam,
+        berat,
+        harga,
+        total:berat*harga
+    });
+
+    save();
+}
+
+function renderJual(){
+
+    let html="";
+
+    data.jual.forEach(x=>{
+
+        html += `
+        <tr>
+            <td>${x.tanggal}</td>
+            <td>${x.kolam || "-"}</td>
+            <td>${x.berat} kg</td>
+            <td>${rupiah(x.harga)}</td>
+            <td><b>${rupiah(x.total)}</b></td>
+            <td>
+                <button class="btn btn-danger"
+                onclick="hapus('jual',${x.id})">Hapus</button>
+            </td>
+        </tr>`;
+    });
+
+    document.getElementById("tabelJual").innerHTML =
+        html || `<tr><td colspan="6">Belum ada pemasukan.</td></tr>`;
+}
+
+/* =========================
+   DASHBOARD
+========================= */
+
+function renderDashboard(){
+
+    let totalBiaya=data.biaya.reduce(
+        (sum,x)=>sum+Number(x.nominal),0
+    );
+
+    let totalJual=data.jual.reduce(
+        (sum,x)=>sum+Number(x.total),0
+    );
+
+    let laba=totalJual-totalBiaya;
+
+    document.getElementById("totalModal").textContent=
+        rupiah(totalBiaya);
+
+    document.getElementById("totalPemasukan").textContent=
+        rupiah(totalJual);
+
+    document.getElementById("labaRugi").textContent=
+        rupiah(laba);
+
+    document.getElementById("totalKolam").textContent=
+        data.kolam.length;
+
+    document.getElementById("dashBiaya").textContent=
+        rupiah(totalBiaya);
+
+    document.getElementById("dashPemasukan").textContent=
+        rupiah(totalJual);
+
+    document.getElementById("dashLaba").textContent=
+        rupiah(laba);
+
+    let rata=data.kolam.length
+        ? totalBiaya/data.kolam.length
+        : 0;
+
+    document.getElementById("modalRata").textContent=
+        rupiah(rata);
+
+    let labaElement=document.getElementById("labaRugi");
+
+    labaElement.className=laba>=0?"green":"red";
+
+    /* Jadwal terdekat */
+    let jadwal=[
+        ...data.pakan.map(x=>({
+            tanggal:x.tanggal,
+            teks:`🍽️ Pakan ${x.kolam} - ${x.jam}`
+        })),
+        ...data.bersih.map(x=>({
+            tanggal:x.tanggal,
+            teks:`🧹 Bersihkan ${x.kolam}`
+        }))
+    ].sort((a,b)=>a.tanggal.localeCompare(b.tanggal));
+
+    document.getElementById("jadwalDashboard").innerHTML =
+        jadwal.length
+        ? jadwal.slice(0,5).map(x=>
+            `<div class="task">
+                <b>${x.tanggal}</b>
+                <span>${x.teks}</span>
+            </div>`
+          ).join("")
+        : "Belum ada jadwal.";
+}
+
+/* =========================
+   RENDER
+========================= */
+
+function renderAll(){
+
+    renderKolam();
+    renderBiaya();
+    renderPakan();
+    renderBersih();
+    renderRawat();
+    renderJual();
+    renderDashboard();
+}
+
+renderAll();
+
+</script>
+
+</body>
+</html>
